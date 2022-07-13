@@ -29,12 +29,19 @@ app.get('/', (_req, res) => {
 app.post('/login', async(req, res) => {
   const htmlEmail = req.body.email;
   const htmlPassword = req.body.password;
+  
+  const salt = await bcrypt.genSalt(12);
+  const encryptedPassword = await bcrypt.hash(htmlPassword, salt);
+
+
   const user = new User({
     email: htmlEmail,
-    password: htmlPassword,
+    password: encryptedPassword,
   });
 
   await user.save();
+
+
 });
 
 // Servidor

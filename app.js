@@ -26,7 +26,7 @@ app.get('/', (_req, res) => {
   res.sendFile(__dirname + '/view/index.html');
 });
 
-app.post('/models/User.js', async(req, res) => {
+app.post('/login', async(req, res) => {
   const htmlEmail = req.body.email;
   const htmlPassword = req.body.password;
   const user = new User({

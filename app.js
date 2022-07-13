@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken');
 //
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
 //Banco de Dados - Provisório para testes
 const dbUser = process.env.DB_USER
@@ -19,10 +21,15 @@ mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.7la1x.mongodb.n
 //
 
 
-
+// Public Route
 app.get('/', (_req, res) => {
   res.sendFile(__dirname + '/view/index.html');
 });
+
+
+
+
+
 
 // Servidor
 app.listen(3000, () => {

@@ -20,7 +20,9 @@ mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.7la1x.mongodb.n
 
 
 
-
+app.get('/', (_req, res) => {
+  res.sendFile(__dirname + '/view/index.html');
+});
 
 // Servidor
 app.listen(3000, () => {

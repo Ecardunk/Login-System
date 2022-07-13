@@ -4,6 +4,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const User = require('./models/User');
 //
 
 const app = express();
@@ -20,16 +21,21 @@ mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.7la1x.mongodb.n
 });
 //
 
-
 // Public Route
 app.get('/', (_req, res) => {
   res.sendFile(__dirname + '/view/index.html');
 });
 
+app.post('/models/User.js', async(req, res) => {
+  const htmlEmail = req.body.email;
+  const htmlPassword = req.body.password;
+  const user = new User({
+    email: htmlEmail,
+    password: htmlPassword,
+  });
 
-
-
-
+  await user.save();
+});
 
 // Servidor
 app.listen(3000, () => {

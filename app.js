@@ -1,7 +1,6 @@
 // IMPORTS
 const express = require('express');
 require('dotenv').config();
-const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -20,7 +19,9 @@ mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.7la1x.mongodb.n
 
 const app = express();
 
-
+app.get('/', (_req, res) => {
+  res.sendFile(__dirname + '/view/index.html');
+});
 
 // Servidor
 app.listen(3000, () => {

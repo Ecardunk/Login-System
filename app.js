@@ -2,6 +2,7 @@
 const express = require('express');
 require('dotenv').config();
 const mongoose = require('mongoose');
+var cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
@@ -11,6 +12,7 @@ const JWT_SECRET = process.env.jwt;
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 //Banco de Dados - Provisório para testes
 const dbUser = process.env.DB_USER
@@ -30,7 +32,7 @@ app.get('/', (_req, res) => {
 app.get('/restrito', (req, res) => {
   const { token } = req.cookie;
   const verify = jwt.verify(token, JWT_SECRET);
-  if (verify === 'user') {
+  if (verify.type === 'user') {
     res.sendFile(__dirname + '/view/logado.html');
   } else {
     res.redirect('/');

@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
-//
+
+const JWT_SECRET = process.env.jwt;
 
 const app = express();
 app.use(express.json());
@@ -26,6 +27,16 @@ app.get('/', (_req, res) => {
   res.sendFile(__dirname + '/view/index.html');
 });
 
+app.get('/restrito', (req, res) => {
+  const { token } = req.cookies;
+  const verify = jwt.verify(token, JWT_SECRET);
+  if (verify === 'user') {
+    res.sendFile(__dirname + '/view/logado.html');
+  } else {
+    res.redirect('/');
+  }
+});
+
 app.post('/login', async (req, res) => {
   const htmlEmail = req.body.email;
   const htmlPassword = req.body.password;
@@ -40,6 +51,7 @@ app.post('/login', async (req, res) => {
     return res.status(422).json({msg: 'Senha incorreta!'});
   }
 
+  res.cookie('token', jwt.sign( {id: user._id, username:user.email, type: 'user'}, JWT_SECRET, { expiresIn: '1h'} ), { maxAge: 1 * 60 * 60 * 1000, httpOnly: true } );
   return res.send({msg: 'Logado com sucesso!'});
 });
 

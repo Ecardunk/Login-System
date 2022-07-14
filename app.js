@@ -26,8 +26,12 @@ app.get('/', (_req, res) => {
   res.sendFile(__dirname + '/view/index.html');
 });
 
+
+
+
 app.post('/login', async (req, res) => {
-  const htmlEmail = req.body.email;
+    //Trocar essa parte depois pela integração com o frontend
+  const htmlEmail = req.body.email;  
   const htmlPassword = req.body.password;
 
   const user = await User.findOne({ email: htmlEmail });
@@ -42,6 +46,10 @@ app.post('/login', async (req, res) => {
 
   return res.send({msg: 'Logado com sucesso!'});
 });
+
+
+
+
 
 // Servidor
 app.listen(3000, () => {

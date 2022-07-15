@@ -2,17 +2,15 @@
 const express = require('express');
 require('dotenv').config();
 const mongoose = require('mongoose');
-var cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
 
-const JWT_SECRET = process.env.jwt;
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+
 
 //Banco de Dados - Provisório para testes
 const dbUser = process.env.DB_USER
@@ -29,14 +27,16 @@ app.get('/', (_req, res) => {
   res.sendFile(__dirname + '/view/index.html');
 });
 
-app.get('/restrito', (req, res) => {
-  const { token } = req.cookie;
-  const verify = jwt.verify(token, JWT_SECRET);
-  if (verify.type === 'user') {
-    res.sendFile(__dirname + '/view/logado.html');
-  } else {
-    res.redirect('/');
+// Private Route
+app.get('/user/:id', checkToken, async (req, res) => {
+ 
+  const id = req.params.id
+  const user = await User.findById(id, '-password')
+  if(!user) {
+    return res.status(404).json({msg:'Acesso restrito!'})
   }
+  res.sendFile(__dirname + '/view/logado.html');
+
 });
 
 app.post('/login', async (req, res) => {
@@ -54,10 +54,41 @@ app.post('/login', async (req, res) => {
     return res.status(422).json({msg: 'Senha incorreta!'});
   }
 
-  res.cookie('token', jwt.sign( {id: user._id, username:user.email, type: 'user'}, JWT_SECRET, { expiresIn: '1h'} ), { maxAge: 1 * 60 * 60 * 1000, httpOnly: true } );
-  return res.send({msg: 'Logado com sucesso!'});
+  try {
+    const secret = process.env.SECRET;
+    const token = jwt.sign({
+      id: user._id,
+    }, 
+    secret,
+    )
+
+    
+  } catch {
+    res.status(500).json({msg:'Aconteceu algum erro no servidor, tente novamente mais tarde!'})
+  }
+
+  
 });
 
+function checkToken(req, res, next) {
+  
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(" ")[1]
+
+  if(!token) {
+    return res.status(401).json({msg: 'Acesso negado!'})
+  }
+  
+  try {
+    const secret = process.env.SECRET;
+    jwt.verify(token, secret)
+    next()
+
+  } catch(error) {
+    res.status(400).json({msg:"Token inválido!"})
+  }
+
+}
 
 
 

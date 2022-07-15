@@ -39,7 +39,7 @@ app.get('/user/:id', checkToken, async (req, res) => {
 
 });
 
-app.post('/login', async (req, res) => {
+app.post('/loginrest', async (req, res) => {
     //Trocar essa parte depois pela integração com o frontend
   const htmlEmail = req.body.email;  
   const htmlPassword = req.body.password;

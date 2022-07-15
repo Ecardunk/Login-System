@@ -35,7 +35,7 @@ app.get('/user/:id', checkToken, async (req, res) => {
   if(!user) {
     return res.status(404).json({msg:'Acesso restrito!'})
   }
-  res.sendFile(__dirname + '/view/logado.html');
+
 
 });
 
@@ -61,7 +61,7 @@ app.post('/login', async (req, res) => {
     }, 
     secret,
     )
-
+    res.sendFile(__dirname + '/view/logado.html');
     
   } catch {
     res.status(500).json({msg:'Aconteceu algum erro no servidor, tente novamente mais tarde!'})
